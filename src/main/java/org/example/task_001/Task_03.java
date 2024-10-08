@@ -31,6 +31,7 @@ public class Task_03 {
             System.out.println("");
         }
 
+        System.out.println("The program counts how many times each digit in the array has occurred.");
         System.out.println(hashMap);
     }
 }
