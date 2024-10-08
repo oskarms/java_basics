@@ -172,30 +172,40 @@ public class Main {
         }
     }
 
+    private static void displayAllEmployees(List<Employee> listEmployees) {
+        for (Employee employee : listEmployees) {
+            printEmployee(employee);
+        }
+    }
+
     private static void printEmployee(Employee employee) {
         System.out.println("Id: " + employee.getId() + ", " + employee.getName() + " " + employee.getSurname() + ", " + employee.getSpecialization());
     }
 
-    private static List<Employee> removeEmployee(List<Employee> listEmployees) {
+    private static void removeEmployee(List<Employee> listEmployees) {
         Scanner scanner = new Scanner(System.in);
+        displayAllEmployees(listEmployees);
+        boolean removeEmployee = false;
         System.out.println("Enter user id to be deleted: ");
         int userId = scanner.nextInt();
-        boolean removeEmployee = false;
-        for (Employee employee : listEmployees) {
-            if (userId == employee.getId()) {
+        while (!removeEmployee) {
+            for (Employee employee : listEmployees) {
+                if (userId == employee.getId()) {
+                    listEmployees.remove(employee);
+                    System.out.println("User has been removed");
+                    removeEmployee = true;
+                    break;
+                }
+            }
+            if (!removeEmployee) {
+                System.out.println("No user with this ID found for deletion");
                 removeEmployee = true;
-                listEmployees.remove(employee);
-                System.out.println("User has been removed");
-                break;
             }
         }
-        if (!removeEmployee) {
-            System.out.println("No user with this ID found for deletion");
-        }
-        return listEmployees;
     }
 
-    private static List<Employee> addEmployee(List<Employee> listEmployees) {
+
+    private static void addEmployee(List<Employee> listEmployees) {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Manager or Technician?");
         String newTypeOfEmployee = scanner.next();
@@ -208,7 +218,6 @@ public class Main {
         } else {
             System.out.println("Incorrect value!");
         }
-        return listEmployees;
     }
 
     private static Manager addManager() {
