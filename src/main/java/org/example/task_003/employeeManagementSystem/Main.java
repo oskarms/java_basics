@@ -2,6 +2,7 @@ package org.example.task_003.employeeManagementSystem;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.Scanner;
 
 
@@ -64,12 +65,11 @@ public class Main {
     }
 
     private static List<Employee> getEmployees() {
-        Technician technician_01 = new Technician("Jan", "Kowalski", 234, Specialization.BACKEND_DEVELOPER);
-        Technician technician_02 = new Technician("Krzysztof", "Nowak", 356, Specialization.QA_ENGINEER);
-        Technician technician_03 = new Technician("Kamil", "Szczodry", 548, Specialization.FRONTEND_DEVELOPER);
-        Manager manager_01 = new Manager("Marcin", "Głodny", 846, Specialization.PRODUCT_MANAGER);
+        Technician technician_01 = new Technician("Jan", "Kowalski", 123, Specialization.BACKEND_DEVELOPER);
+        Technician technician_02 = new Technician("Krzysztof", "Nowak", 267, Specialization.QA_ENGINEER);
+        Technician technician_03 = new Technician("Kamil", "Szczodry", 733, Specialization.FRONTEND_DEVELOPER);
+        Manager manager_01 = new Manager("Marcin", "Głodny", 492, Specialization.PRODUCT_MANAGER);
 
-        technician_01.completeTask();
         List<Employee> listEmployees = new ArrayList<>();
         listEmployees.add(technician_01);
         listEmployees.add(technician_02);
@@ -132,43 +132,47 @@ public class Main {
 
     private static void displayEmployees(List<Employee> listEmployees) {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Display: ALL, QA_ENGINEER, BACKEND_DEVELOPER, FRONTEND_DEVELOPER, PRODUCT_MANAGER");
-        String display = scanner.next();
-        switch (display) {
-            case "ALL" -> {
-                for (Employee employee : listEmployees) {
-                    printEmployee(employee);
-                }
-            }
-            case "QA_ENGINEER" -> {
-                for (Employee employee : listEmployees) {
-                    if (employee.getSpecialization() == Specialization.QA_ENGINEER) {
+        boolean displayOn = true;
+        while (displayOn) {
+            System.out.println("Display: ALL, QA_ENGINEER, BACKEND_DEVELOPER, FRONTEND_DEVELOPER, PRODUCT_MANAGER, " + "closeDisplaying");
+            String display = scanner.next();
+            switch (display) {
+                case "ALL" -> {
+                    for (Employee employee : listEmployees) {
                         printEmployee(employee);
                     }
                 }
-            }
-            case "BACKEND_DEVELOPER" -> {
-                for (Employee employee : listEmployees) {
-                    if (employee.getSpecialization() == Specialization.BACKEND_DEVELOPER) {
-                        printEmployee(employee);
+                case "QA_ENGINEER" -> {
+                    for (Employee employee : listEmployees) {
+                        if (employee.getSpecialization() == Specialization.QA_ENGINEER) {
+                            printEmployee(employee);
+                        }
                     }
                 }
-            }
-            case "FRONTEND_DEVELOPER" -> {
-                for (Employee employee : listEmployees) {
-                    if (employee.getSpecialization() == Specialization.FRONTEND_DEVELOPER) {
-                        printEmployee(employee);
+                case "BACKEND_DEVELOPER" -> {
+                    for (Employee employee : listEmployees) {
+                        if (employee.getSpecialization() == Specialization.BACKEND_DEVELOPER) {
+                            printEmployee(employee);
+                        }
                     }
                 }
-            }
-            case "PRODUCT_MANAGER" -> {
-                for (Employee employee : listEmployees) {
-                    if (employee.getSpecialization() == Specialization.PRODUCT_MANAGER) {
-                        printEmployee(employee);
+                case "FRONTEND_DEVELOPER" -> {
+                    for (Employee employee : listEmployees) {
+                        if (employee.getSpecialization() == Specialization.FRONTEND_DEVELOPER) {
+                            printEmployee(employee);
+                        }
                     }
                 }
+                case "PRODUCT_MANAGER" -> {
+                    for (Employee employee : listEmployees) {
+                        if (employee.getSpecialization() == Specialization.PRODUCT_MANAGER) {
+                            printEmployee(employee);
+                        }
+                    }
+                }
+                case "closeDisplaying" -> displayOn = false;
+                default -> System.out.println("Incorrect value!");
             }
-            default -> System.out.println("Incorrect value!");
         }
     }
 
@@ -186,9 +190,10 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         displayAllEmployees(listEmployees);
         boolean removeEmployee = false;
-        System.out.println("Enter user id to be deleted: ");
-        int userId = scanner.nextInt();
+
         while (!removeEmployee) {
+            System.out.println("Enter user id to be deleted: ");
+            int userId = scanner.nextInt();
             for (Employee employee : listEmployees) {
                 if (userId == employee.getId()) {
                     listEmployees.remove(employee);
@@ -207,48 +212,50 @@ public class Main {
 
     private static void addEmployee(List<Employee> listEmployees) {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Manager or Technician?");
-        String newTypeOfEmployee = scanner.next();
-        if (newTypeOfEmployee.equals("Technician")) {
-            Technician technician = addTechnician();
-            listEmployees.add(technician);
-        } else if (newTypeOfEmployee.equals("Manager")) {
-            Manager manager = addManager();
-            listEmployees.add(manager);
-        } else {
-            System.out.println("Incorrect value!");
+        boolean addEmployeeOn = true;
+        while (addEmployeeOn) {
+            System.out.println("MANAGER, TECHNICIAN, closingAddEmployee?");
+            String newTypeOfEmployee = scanner.next();
+            switch (newTypeOfEmployee) {
+                case "TECHNICIAN" -> {
+                    Technician technician = addTechnician(listEmployees);
+                    listEmployees.add(technician);
+                }
+                case "MANAGER" -> {
+                    Manager manager = addManager(listEmployees);
+                    listEmployees.add(manager);
+                }
+                case "closingAddEmployee" -> addEmployeeOn = false;
+                default -> System.out.println("Incorrect value!");
+            }
         }
     }
 
-    private static Manager addManager() {
+    private static Manager addManager(List<Employee> listEmployees) {
         Scanner scanner = new Scanner(System.in);
         Manager manager = new Manager();
-        System.out.println("User id: ");
-        int id = scanner.nextInt();
-        manager.setId(id);
         System.out.println("Name: ");
         String name = scanner.next();
         manager.setName(name);
         System.out.println("Surname: ");
         String surname = scanner.next();
         manager.setSurname(surname);
+        manager.setId(generateUserId(listEmployees));
         manager.setSpecialization(Specialization.PRODUCT_MANAGER);
-        System.out.println("You added an employee");
+        System.out.println("You added an employee!");
         return manager;
     }
 
-    private static Technician addTechnician() {
+    private static Technician addTechnician(List<Employee> listEmployees) {
         Scanner scanner = new Scanner(System.in);
         Technician technician = new Technician();
-        System.out.println("User Id: ");
-        int id = scanner.nextInt();
-        technician.setId(id);
         System.out.println("Name: ");
         String name = scanner.next();
         technician.setName(name);
         System.out.println("Surname: ");
         String surname = scanner.next();
         technician.setSurname(surname);
+        technician.setId(generateUserId(listEmployees));
 
         boolean defineUserSpecialization = true;
         while (defineUserSpecialization) {
@@ -257,20 +264,41 @@ public class Main {
             switch (specialization) {
                 case "QA_ENGINEER" -> {
                     technician.setSpecialization(Specialization.QA_ENGINEER);
+                    System.out.println("You added an employee!");
                     defineUserSpecialization = false;
                 }
                 case "BACKEND_DEVELOPER" -> {
                     technician.setSpecialization(Specialization.BACKEND_DEVELOPER);
+                    System.out.println("You added an employee!");
                     defineUserSpecialization = false;
                 }
                 case "FRONTEND_DEVELOPER" -> {
                     technician.setSpecialization(Specialization.FRONTEND_DEVELOPER);
+                    System.out.println("You added an employee!");
                     defineUserSpecialization = false;
                 }
                 default -> System.out.println("Incorrect value!");
             }
         }
+
         return technician;
+    }
+
+    private static int generateUserId(List<Employee> listEmployees) {
+        boolean correctValue = true;
+        int randomIdUser = 0;
+        while (correctValue) {
+            Random random = new Random();
+            randomIdUser = random.nextInt(1, 999);
+            correctValue = false;
+            for (Employee employee : listEmployees) {
+                if (randomIdUser == employee.getId()) {
+                    correctValue = true;
+                    break;
+                }
+            }
+        }
+        return randomIdUser;
     }
 }
 
