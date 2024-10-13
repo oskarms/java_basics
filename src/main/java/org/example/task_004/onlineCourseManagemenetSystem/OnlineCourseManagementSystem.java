@@ -1,11 +1,13 @@
 package org.example.task_004.onlineCourseManagemenetSystem;
 
+import org.example.task_004.projectTeamManagementSystem.Person;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.Scanner;
 
 public class OnlineCourseManagementSystem {
-
     private List<Course> courses;
     private List<Student> students;
     private List<Enrollment> enrollments;
@@ -65,15 +67,31 @@ public class OnlineCourseManagementSystem {
     }
 
     public void addStudent(Scanner scanner) {
-        System.out.print("id studenta: ");
-        int id = scanner.nextInt();
-        System.out.print("imię: ");
+        int id = generateUserId(students);
+        System.out.print("Name: ");
         String name = scanner.next();
-        System.out.print("email: ");
+        System.out.print("Email: ");
         String email = scanner.next();
 
         Student student = new Student(id, name, email);
         students.add(student);
+    }
+
+    private static int generateUserId(List<Student> studentList) {
+        boolean correctValue = true;
+        int randomIdUser = 0;
+        while (correctValue) {
+            Random random = new Random();
+            randomIdUser = random.nextInt(1, 999);
+            correctValue = false;
+            for (Student student : studentList) {
+                if (randomIdUser == student.getId()) {
+                    correctValue = true;
+                    break;
+                }
+            }
+        }
+        return randomIdUser;
     }
 
     public void studentEnrollment(Scanner scanner) {
