@@ -27,7 +27,7 @@ public class ProjectManagementSystem {
                 members.add(developer);
                 addMemberOn = false;
             } else if (member.equals("manager")) {
-                System.out.print("wielkość zespołu managera: ");
+                System.out.print("Size of your team: ");
                 int team = scanner.nextInt();
                 Manager manager = new Manager(id, name, email, team);
                 members.add(manager);
@@ -36,46 +36,75 @@ public class ProjectManagementSystem {
                 System.out.println("Invalid value!");
             }
         }
-
-        Person person = new Person(id, name, email);
-        members.add(person);
         System.out.println("You have added a new team member");
     }
 
     public void displayMembers() {
         for (Person person : members) {
-            System.out.println("id: " + person.getId() + ", imię: " + person.getName() + ", email: " + person.getEmail());
+            System.out.println("id: " + person.getId() + ", name: " + person.getName() + ", email: " + person.getEmail());
         }
     }
 
     public void assignTask(Scanner scanner) {
-        System.out.print("Podaj id zadania: ");
-        int id = scanner.nextInt();
-        System.out.print("Podaj tytuł: ");
-        String title = scanner.next();
-        System.out.print("Podaj opis: ");
-        String description = scanner.next();
-
-        Person assignPerson = null;
-        boolean assignedPersonToTask = false;
-        while (!assignedPersonToTask) {
-            displayMembers();
-            System.out.println("Przypisz osobę, podaj jej id: ");
-            int personId = scanner.nextInt();
-            for (Person person : members) {
-                if (person.getId() == personId) {
-                    assignPerson = person;
-                    assignedPersonToTask = true;
+        boolean chooseTaskToAssignOn = true;
+        Task taskToAssign = null;
+        while (chooseTaskToAssignOn) {
+            displayTasks();
+            System.out.println("Give task id, to which you want assign user: ");
+            int taskId = scanner.nextInt();
+            for (Task task : tasks) {
+                if (task.getTaskId() == taskId) {
+                    taskToAssign = task;
+                    chooseTaskToAssignOn = false;
+                    break;
                 }
             }
         }
 
-        System.out.print("Podaj status: ");
-        String status = scanner.next();
+        Person assignPerson = null;
+        boolean assignPersonToTaskOn = true;
+        while (assignPersonToTaskOn) {
+            displayMembers();
+            System.out.println("Give user id, which will be realize task: ");
+            int personId = scanner.nextInt();
+            for (Person person : members) {
+                if (person.getId() == personId) {
+                    assignPerson = person;
+                    assignPersonToTaskOn = false;
+                    break;
+                }
+            }
+        }
 
-        Task task = new Task(id, title, description, assignPerson, status);
+        taskToAssign.setAssignee(assignPerson);
+    }
+
+    public void createTask(Scanner scanner) {
+        int id = generateTaskId(tasks);
+        System.out.print("Title: ");
+        String title = scanner.next();
+        System.out.print("Description: ");
+        String description = scanner.next();
+        Task task = new Task(id, title, description, null, StatusOfTask.CREATED);
         tasks.add(task);
-        System.out.println("Przypisałeś zadanie do członka zespołu");
+        System.out.println("Task created!");
+    }
+
+    private static int generateTaskId(List<Task> taskList) {
+        boolean correctValue = true;
+        int uniqueTaskId = 0;
+        while (correctValue) {
+            Random random = new Random();
+            uniqueTaskId = random.nextInt(1, 100);
+            correctValue = false;
+            for (Task task : taskList) {
+                if (uniqueTaskId == task.getTaskId()) {
+                    correctValue = true;
+                    break;
+                }
+            }
+        }
+        return uniqueTaskId;
     }
 
     public void displayTasks() {
@@ -84,49 +113,117 @@ public class ProjectManagementSystem {
             System.out.println("id: " + task.getTaskId());
             System.out.println("title: " + task.getTitle());
             System.out.println("status: " + task.getStatus());
-            System.out.println("assignee: " + task.getAssignee().getName() + ", " + task.getAssignee().getEmail());
+            if (task.getAssignee() == null) {
+                System.out.println("assignee: empty");
+            } else {
+                System.out.println("assignee: " + task.getAssignee().getName() + ", " + task.getAssignee().getEmail());
+            }
             System.out.println("description: " + task.getDescription());
             System.out.println();
         }
     }
 
     public void updateStatusTask(Scanner scanner) {
-        displayTasks();
-        boolean taskExist = false;
-        while (!taskExist) {
-            System.out.println("Wybierz id zadania istniejącego do aktualizacji: ");
+        boolean updateStatusTaskOn = true;
+        while (updateStatusTaskOn) {
+            displayTasks();
+            System.out.println("Give task id which you want update: ");
             int taskId = scanner.nextInt();
             for (Task task : tasks) {
                 if (task.getTaskId() == taskId) {
-                    System.out.print("Ustaw nowy status zadania: ");
-                    String status = scanner.next();
-                    task.setStatus(status);
-                    taskExist = true;
-                    System.out.println("Wykonałeś aktulizacje statusu zadania");
+                    boolean newStatusTaskOn = true;
+                    while (newStatusTaskOn) {
+                        System.out.println("New status of task: created, to_realise, open, to_verify, verified, " +
+                                "closed");
+                        String status = scanner.next();
+                        switch (status) {
+                            case "created":
+                                task.setStatus(StatusOfTask.CREATED);
+                                newStatusTaskOn = false;
+                                updateStatusTaskOn = false;
+                                System.out.println("Status of task updated!");
+                                break;
+                            case "to_realise":
+                                task.setStatus(StatusOfTask.TO_REALISE);
+                                newStatusTaskOn = false;
+                                updateStatusTaskOn = false;
+                                System.out.println("Status of task updated!");
+                            case "open":
+                                task.setStatus(StatusOfTask.OPEN);
+                                newStatusTaskOn = false;
+                                updateStatusTaskOn = false;
+                                System.out.println("Status of task updated!");
+                                break;
+                            case "to_verify":
+                                task.setStatus(StatusOfTask.TO_VERIFY);
+                                newStatusTaskOn = false;
+                                updateStatusTaskOn = false;
+                                System.out.println("Status of task updated!");
+                                break;
+                            case "verified":
+                                task.setStatus(StatusOfTask.VERIFIED);
+                                newStatusTaskOn = false;
+                                updateStatusTaskOn = false;
+                                System.out.println("Status of task updated!");
+                                break;
+                            case "closed":
+                                task.setStatus(StatusOfTask.CLOSED);
+                                newStatusTaskOn = false;
+                                updateStatusTaskOn = false;
+                                System.out.println("Status of task updated!");
+                                break;
+                            default:
+                                System.out.println("Invalid value!");
+                        }
+                    }
                 }
             }
         }
     }
 
-    public void displayTasksByFilter(Scanner scanner) {
-        boolean filter = true;
-        while (filter) {
-            System.out.print("Podaj status zadań do wyświetlenia (TO_DO, IN_PROGRESS, DONE): ");
+    public void displayTasksByStatus(Scanner scanner) {
+        boolean displayTasksByStatusOn = true;
+        while (displayTasksByStatusOn) {
+            System.out.println("Display tasks by status: created, to_realise, open, to_verify, verified, closed");
             String status = scanner.next();
-            if (status.equals("TO_DO")) {
-                List<Task> result = tasks.stream().filter(task -> task.getStatus().equals("TO_DO")).toList();
-                displayTasks(result);
-                filter = false;
-            } else if (status.equals("IN_PROGRESS")) {
-                List<Task> result = tasks.stream().filter(task -> task.getStatus().equals("IN_PROGRESS")).toList();
-                displayTasks(result);
-                filter = false;
-            } else if (status.equals("DONE")) {
-                List<Task> result = tasks.stream().filter(task -> task.getStatus().equals("DONE")).toList();
-                displayTasks(result);
-                filter = false;
-            } else {
-                System.out.println("Niepoprawna wartość!");
+            switch (status) {
+                case "created" -> {
+                    List<Task> result =
+                            tasks.stream().filter(task -> task.getStatus().equals(StatusOfTask.CREATED)).toList();
+                    displayTasks(result);
+                    displayTasksByStatusOn = false;
+                }
+                case "to_realise" -> {
+                    List<Task> result =
+                            tasks.stream().filter(task -> task.getStatus().equals(StatusOfTask.TO_REALISE)).toList();
+                    displayTasks(result);
+                    displayTasksByStatusOn = false;
+                }
+                case "open" -> {
+                    List<Task> result =
+                            tasks.stream().filter(task -> task.getStatus().equals(StatusOfTask.OPEN)).toList();
+                    displayTasks(result);
+                    displayTasksByStatusOn = false;
+                }
+                case "to_verify" -> {
+                    List<Task> result =
+                            tasks.stream().filter(task -> task.getStatus().equals(StatusOfTask.TO_VERIFY)).toList();
+                    displayTasks(result);
+                    displayTasksByStatusOn = false;
+                }
+                case "verified" -> {
+                    List<Task> result =
+                            tasks.stream().filter(task -> task.getStatus().equals(StatusOfTask.VERIFIED)).toList();
+                    displayTasks(result);
+                    displayTasksByStatusOn = false;
+                }
+                case "closed" -> {
+                    List<Task> result =
+                            tasks.stream().filter(task -> task.getStatus().equals(StatusOfTask.CLOSED)).toList();
+                    displayTasks(result);
+                    displayTasksByStatusOn = false;
+                }
+                default -> System.out.println("Invalid value!");
             }
         }
     }
