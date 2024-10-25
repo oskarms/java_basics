@@ -113,10 +113,10 @@ public class ProjectManagementSystem {
             System.out.println("id: " + task.getTaskId());
             System.out.println("title: " + task.getTitle());
             System.out.println("status: " + task.getStatus());
-            if (task.getAssignee() == null) {
-                System.out.println("assignee: empty");
-            } else {
+            if (task.getAssignee() != null) {
                 System.out.println("assignee: " + task.getAssignee().getName() + ", " + task.getAssignee().getEmail());
+            } else {
+                System.out.println("assignee: -");
             }
             System.out.println("description: " + task.getDescription());
             System.out.println();
@@ -230,13 +230,21 @@ public class ProjectManagementSystem {
 
     private void displayTasks(List<Task> tasks) {
         System.out.println();
-        for (Task task : tasks) {
-            System.out.println("id: " + task.getTaskId());
-            System.out.println("title: " + task.getTitle());
-            System.out.println("status: " + task.getStatus());
-            System.out.println("assignee: " + task.getAssignee().getName() + ", " + task.getAssignee().getEmail());
-            System.out.println("description: " + task.getDescription());
-            System.out.println();
+        if (tasks.isEmpty()) {
+            System.out.println("No tasks found with this status.");
+        } else{
+            for (Task task : tasks) {
+                System.out.println("id: " + task.getTaskId());
+                System.out.println("title: " + task.getTitle());
+                System.out.println("status: " + task.getStatus());
+                if (task.getAssignee() != null) {
+                    System.out.println("assignee: " + task.getAssignee().getName() + ", " + task.getAssignee().getEmail());
+                } else {
+                    System.out.println("assigned to: -");
+                }
+                System.out.println("description: " + task.getDescription());
+                System.out.println();
+            }
         }
     }
 
