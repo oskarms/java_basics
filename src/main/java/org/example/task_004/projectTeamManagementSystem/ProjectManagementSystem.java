@@ -75,7 +75,6 @@ public class ProjectManagementSystem {
                 }
             }
         }
-
         taskToAssign.setAssignee(assignPerson);
     }
 
@@ -148,6 +147,7 @@ public class ProjectManagementSystem {
                                 newStatusTaskOn = false;
                                 updateStatusTaskOn = false;
                                 System.out.println("Status of task updated!");
+                                break;
                             case "open":
                                 task.setStatus(StatusOfTask.OPEN);
                                 newStatusTaskOn = false;
