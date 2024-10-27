@@ -17,8 +17,8 @@ public class Main {
                 case "assignStudentOnCourse" -> onlineCourseManagementSystem.studentEnrollment(scanner);
                 case "displayCourses" -> onlineCourseManagementSystem.displayCourses();
                 case "displayStudents" -> onlineCourseManagementSystem.displayStudents();
-                case "displayStudentProgress" -> onlineCourseManagementSystem.displayStudents();
-                case "updateStudentStatus" -> onlineCourseManagementSystem.updateEnrollment(scanner);
+                case "displayStudentProgress" -> onlineCourseManagementSystem.displayStudentProgress();
+                case "updateStudentProgress" -> onlineCourseManagementSystem.updateEnrollment(scanner);
                 case "closeSystem" -> systemOn = false;
                 default -> System.out.println("Incorrect value!");
             }

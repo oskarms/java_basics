@@ -1,69 +1,83 @@
 package org.example.task_004.onlineCourseManagemenetSystem;
 
-import org.example.task_004.projectTeamManagementSystem.Person;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 
 public class OnlineCourseManagementSystem {
-    private List<Course> courses;
-    private List<Student> students;
-    private List<Enrollment> enrollments;
+    private List<Course> courses = new ArrayList<>();
+    private List<Student> students = new ArrayList<>();
+    private List<Enrollment> enrollments = new ArrayList<>();
 
     public void addCourse(Scanner scanner) {
-        System.out.print("id kursu: ");
-        int id = scanner.nextInt();
-        System.out.print("tytuł: ");
+        int id = generateCourseId(courses);
+        System.out.print("Title: ");
         String title = scanner.next();
-        System.out.print("instruktor: ");
+        System.out.print("Teacher: ");
         String instructor = scanner.next();
-        System.out.print("liczba godzin: ");
-        int duration = scanner.nextInt();
 
-        System.out.println("kurs programistyczny czy ux?");
-        String typeOfCourse = scanner.next();
-
-        boolean systemOn = true;
-        while (systemOn == true) {
-            if (typeOfCourse.equals("programistyczny")) {
+        boolean addCourseOn = true;
+        while (addCourseOn) {
+            System.out.print("Course development or ux: ");
+            String typeOfCourse = scanner.next();
+            if (typeOfCourse.equals("development")) {
                 List<String> programingLanguages = new ArrayList<>();
-                boolean addedLanguages = false;
-                while (addedLanguages == false) {
-                    System.out.print("Podaj języki programowania na kursie programistycznym lub wpisz 'zakończ'");
+                boolean addedLanguagesOn = true;
+                while (addedLanguagesOn) {
+                    System.out.print("Give the programing languages, of the course or write 'close': ");
                     String programingLanguage = scanner.next();
-                    if (!programingLanguage.equals("zakończ")) {
+                    if (!programingLanguage.equals("close")) {
                         programingLanguages.add(programingLanguage);
                     } else {
-                        addedLanguages = true;
+                        addedLanguagesOn = false;
                     }
                 }
+                System.out.print("Amount of hours: ");
+                int duration = scanner.nextInt();
                 ProgramingCourse programingCourse = new ProgramingCourse(id, title, instructor, duration,
                         programingLanguages);
                 courses.add(programingCourse);
-                systemOn = false;
+                addCourseOn = false;
             } else if (typeOfCourse.equals("ux")) {
                 List<String> uxTools = new ArrayList<>();
-                boolean addedTools = false;
-                while (addedTools == false) {
-                    System.out.print("narzędzie ux w kursie ux lub wpisz 'zakończ': ");
+                boolean addUxToolsOn = true;
+                while (addUxToolsOn) {
+                    System.out.print("Give the tool of ux or write 'close': ");
                     String uxTool = scanner.next();
-                    if (!uxTool.equals("zakończ")) {
+                    if (!uxTool.equals("close")) {
                         uxTools.add(uxTool);
                     } else {
-                        addedTools = true;
+                        addUxToolsOn = false;
                     }
                 }
-                ProgramingCourse programingCourse = new ProgramingCourse(id, title, instructor, duration, uxTools);
-                courses.add(programingCourse);
-                systemOn = false;
+                System.out.print("Amount of hours: ");
+                int duration = scanner.nextInt();
+                GraphicCourse graphicCourse = new GraphicCourse(id, title, instructor, duration, uxTools);
+                courses.add(graphicCourse);
+                addCourseOn = false;
             } else {
-                System.out.println("Niepoprawna wartość!");
+                System.out.println("Invalid value!");
             }
         }
+        System.out.println("Course added!");
+    }
 
-        System.out.println("Dodałeś nowy kurs");
+    private static int generateCourseId(List<Course> courseList) {
+        boolean correctValue = true;
+        int randomIdCourse = 0;
+        while (correctValue) {
+            Random random = new Random();
+            randomIdCourse = random.nextInt(1, 999);
+            correctValue = false;
+            for (Course course : courseList) {
+                if (randomIdCourse == course.getId()) {
+                    correctValue = true;
+                    break;
+                }
+            }
+        }
+        return randomIdCourse;
     }
 
     public void addStudent(Scanner scanner) {
@@ -75,6 +89,7 @@ public class OnlineCourseManagementSystem {
 
         Student student = new Student(id, name, email);
         students.add(student);
+        System.out.println("Student added!");
     }
 
     private static int generateUserId(List<Student> studentList) {
@@ -95,33 +110,32 @@ public class OnlineCourseManagementSystem {
     }
 
     public void studentEnrollment(Scanner scanner) {
-        System.out.print("Podaj id zdarzenia zapisu na kurs: ");
-        int idEnrollment = scanner.nextInt();
-
+        int idEnrollment = studentEnrollmentId(enrollments);
         Student assignStudent = null;
-        boolean assignedStudentToEnrollment = false;
-        while (assignedStudentToEnrollment == false) {
+        boolean assignedStudentToEnrollmentOn = true;
+
+        while (assignedStudentToEnrollmentOn) {
             displayStudents();
-            System.out.println("Wybierz studenta, którego chesz zapisać na kurs, podaj jego id: ");
+            System.out.println("Enter the id of the student you want to enroll in the course: ");
             int studentId = scanner.nextInt();
             for (Student student : students) {
                 if (student.getId() == studentId) {
                     assignStudent = student;
-                    assignedStudentToEnrollment = true;
+                    assignedStudentToEnrollmentOn = false;
                 }
             }
         }
 
         Course assignCourse = null;
-        boolean assignedCourseToEnrollment = false;
-        while (assignedCourseToEnrollment == false) {
+        boolean assignedCourseToEnrollmentOn = true;
+        while (assignedCourseToEnrollmentOn) {
             displayCourses();
-            System.out.println("Wybierz kurs, do którego chcesz zapisać studenta, podaj id kursu: ");
+            System.out.println("enter the id of the course you want to enroll the student in: ");
             int courseId = scanner.nextInt();
             for (Course course : courses) {
                 if (course.getId() == courseId) {
                     assignCourse = course;
-                    assignedCourseToEnrollment = true;
+                    assignedCourseToEnrollmentOn = false;
                 }
             }
         }
@@ -129,41 +143,70 @@ public class OnlineCourseManagementSystem {
         double progress = 0;
         Enrollment enrollment = new Enrollment(idEnrollment, assignStudent, assignCourse, progress);
         enrollments.add(enrollment);
+        System.out.println("Student assigned to course!");
+    }
+
+    private static int studentEnrollmentId(List<Enrollment> enrollmentList) {
+        boolean correctValue = true;
+        int randomIdEnrollment = 0;
+        while (correctValue) {
+            Random random = new Random();
+            randomIdEnrollment = random.nextInt(1, 999);
+            correctValue = false;
+            for (Enrollment enrollment : enrollmentList) {
+                if (randomIdEnrollment == enrollment.getEnrollmentId()) {
+                    correctValue = true;
+                    break;
+                }
+            }
+        }
+        return randomIdEnrollment;
     }
 
     public void displayCourses() {
-        System.out.println("Kursy:");
+        System.out.println("List of courses:");
         for (Course course : courses) {
-            System.out.println(course + " ");
+            System.out.println("id: " + course.getId());
+            System.out.println("title: " + course.getTittle());
+            System.out.println("");
         }
     }
 
     public void displayStudents() {
-        System.out.println("Studenci:");
+        System.out.println("List of students:");
         for (Student student : students) {
-            System.out.println(student + " ");
+            System.out.println("id: " + student.getId());
+            System.out.println("name: " + student.getName());
+            System.out.println("email: " + student.getEmail());
+            System.out.println("");
         }
     }
 
     public void updateEnrollment(Scanner scanner) {
-        System.out.println("Zapisy na kurs:");
-        for (Enrollment enrollment : enrollments) {
-            System.out.println("id: " + enrollment.getEnrollmentId() + " kurs: " + enrollment.getCourse() + " student" +
-                    ": " + enrollment.getStudent() + " progres: " + enrollment.getProgress());
-        }
-        boolean enrollmentExist = false;
-        while (enrollmentExist == false) {
-            System.out.println("Wybierz id zapisu studenta do aktulizacji: ");
+        System.out.println("Enrollments at course:");
+        displayStudentProgress();
+        boolean updateEnrollmentOn = true;
+        while (updateEnrollmentOn) {
+            System.out.println("Pick student enrollment id to update: ");
             int enrollmentId = scanner.nextInt();
             for (Enrollment enrollment : enrollments) {
                 if (enrollment.getEnrollmentId() == enrollmentId) {
-                    System.out.print("Ustaw nowy progres zadania: ");
+                    System.out.print("Set new progression for the task: ");
                     double progress = scanner.nextDouble();
                     enrollment.setProgress(progress);
-                    enrollmentExist = true;
-                    System.out.println("Wykonałeś aktulizacje zapisu studenta");
+                    updateEnrollmentOn = false;
+                    System.out.println("Student enrollment updated!");
                 }
             }
         }
     }
+
+    public void displayStudentProgress() {
+        System.out.println("Progress of students:");
+        for (Enrollment enrollment : enrollments) {
+            System.out.println("id: " + enrollment.getEnrollmentId() + "Course: " + enrollment.getCourse() + " " +
+                    "student: " + enrollment.getStudent() + " " + "progress: " + enrollment.getProgress());
+        }
+    }
+
 }
